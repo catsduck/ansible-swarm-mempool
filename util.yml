@@ -1,0 +1,8 @@
+---
+
+- name: configure util hosts
+  become: true
+  hosts: util
+  roles:
+    - { role: docker, tags: "docker" }
+
