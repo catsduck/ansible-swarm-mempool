@@ -1,0 +1,31 @@
+---
+
+# Manages instance of electrumx running in Docker
+
+# ELECTRUMX_DAEMON_URL needs to be set to a Bitcoin full node RPC endpoint
+# ie http://user:pass@host:port
+
+- include_vars: vault.yml
+
+- name: Create volume for database
+  community.docker.docker_volume:
+    name: electrumx-data
+
+- name: Create electrumx container
+  community.docker.docker_container:
+    name: electrumx
+    image: catsduck/electrumx
+    pull: true
+    restart_policy: always
+    mounts:
+      - target: /data
+        source: electrumx-data
+    ulimits:
+      - nofile:1048576:1048576
+    published_ports:
+      - 50001:50001
+      - 50002:50002
+      - 50004:50004
+      - 8000:8000
+    env:
+      DAEMON_URL="{{ ELECTRUMX_DAEMON_URL }}"

@@ -6,4 +6,5 @@
   roles:
     - { role: docker, tags: "docker" }
     - { role: docker-compose, tags: "docker-compose" }
+    - { role: electrumx-docker, tags: "electrumx-docker" }
 
