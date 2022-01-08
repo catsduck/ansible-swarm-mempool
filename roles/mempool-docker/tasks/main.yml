@@ -1,0 +1,17 @@
+---
+
+# loosely following https://github.com/mempool/mempool/tree/master/docker
+
+- include_vars: vault.yml
+
+- name: Deploy docker-compose.yml
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: /opt/mempool/docker-compose.yml
+    owner: root
+    group: root
+    mode: '0400'
+
+- name: Start mempool with Docker Compose
+  community.docker.docker_compose:
+    project_src: /opt/mempool

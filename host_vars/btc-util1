@@ -3,3 +3,5 @@
 pip3_packages:
   - docker
   - docker-compose
+
+mempool_electrum_host: "{{ ansible_facts['default_ipv4']['address'] }}"
