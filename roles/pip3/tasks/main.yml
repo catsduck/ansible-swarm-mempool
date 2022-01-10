@@ -7,4 +7,3 @@
 - name: install pip3 packages
   ansible.builtin.pip:
     name: "{{ pip3_packages }}"
-  when: pip3_packages is defined

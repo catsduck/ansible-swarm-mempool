@@ -17,3 +17,9 @@
       - docker-ce
       - docker-ce-cli
       - containerd.io
+
+- name: Install pip3 docker package
+  ansible.builtin.include_role:
+    name: pip3
+  vars:
+    pip3_packages: docker
