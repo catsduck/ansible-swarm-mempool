@@ -23,3 +23,7 @@
     name: pip3
   vars:
     pip3_packages: docker
+
+- name: Deploy cAdvisor container
+  ansible.builtin.include_role:
+    name: cadvisor-docker
