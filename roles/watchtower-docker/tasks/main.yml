@@ -1,0 +1,13 @@
+---
+
+# watchtower detects and pulls new images and restarts containers
+# https://containrrr.dev/watchtower/
+
+- name: Deploy watchtower container
+  community.docker.docker_container:
+    name: watchtower
+    image: "containrrr/watchtower"
+    restart_policy: always
+    detach: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
