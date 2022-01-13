@@ -26,7 +26,6 @@
       - 50001:50001
       - 50002:50002
       - 50004:50004
-      - 8000:8000
     env:
       DAEMON_URL="{{ ELECTRUMX_DAEMON_URL }}"
       REQUEST_TIMEOUT=120
