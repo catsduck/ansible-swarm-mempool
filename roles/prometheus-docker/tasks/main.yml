@@ -1,0 +1,21 @@
+---
+
+- name: Create prometheus directory
+  file:
+    path: /etc/prometheus
+    state: directory
+
+- name: Deploy prometheus config
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+
+- name: Deploy prometheus container
+  community.docker.docker_container:
+    name: prometheus
+    image: "prom/prometheus"
+    restart_policy: always
+    volumes:
+      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - 9090:9090
