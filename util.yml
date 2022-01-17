@@ -4,7 +4,6 @@
   become: true
   hosts: util
   roles:
-    - { role: hostname, tags: "hostname" }
     - { role: docker, tags: "docker" }
     - { role: docker-compose, tags: "docker-compose" }
     - { role: electrumx-docker, tags: "electrumx-docker" }
