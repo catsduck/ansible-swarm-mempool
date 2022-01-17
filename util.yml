@@ -8,4 +8,3 @@
     - { role: docker-compose, tags: "docker-compose" }
     - { role: electrumx-docker, tags: "electrumx-docker" }
     - { role: mempool-docker, tags: "mempool-docker" }
-    - { role: watchtower-docker, tags: "watchtower-docker" }
