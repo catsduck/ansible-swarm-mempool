@@ -6,5 +6,6 @@
   roles:
     - { role: docker, tags: "docker" }
     - { role: docker-compose, tags: "docker-compose" }
+    - { role: cadvisor-docker, tags: "cadvisor-docker" }
     - { role: electrumx-docker, tags: "electrumx-docker" }
     - { role: mempool-docker, tags: "mempool-docker" }
