@@ -10,12 +10,17 @@
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
 
+- name: Create prometheus volume
+  community.docker.docker_volume:
+    name: prometheus
+
 - name: Deploy prometheus container
   community.docker.docker_container:
     name: prometheus
     image: "prom/prometheus"
     restart_policy: always
     volumes:
+      - prometheus:/prometheus
       - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     ports:
       - 9090:9090
