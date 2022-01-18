@@ -1,0 +1,15 @@
+---
+
+- name: Create grafana volume
+  community.docker.docker_volume:
+    name: grafana
+
+- name: Deploy grafana container
+  community.docker.docker_container:
+    name: grafana
+    image: "grafana/grafana-oss"
+    restart_policy: always
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana:/var/lib/grafana
