@@ -7,3 +7,4 @@
     - { role: docker, tags: "docker" }
     - { role: prometheus-docker, tags: "prometheus-docker" }
     - { role: grafana-docker, tags: "grafana-docker" }
+    - { role: node_exporter, tags: "node_exporter" }

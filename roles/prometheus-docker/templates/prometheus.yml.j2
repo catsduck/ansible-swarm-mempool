@@ -6,6 +6,7 @@ scrape_configs:
   static_configs:
   - targets:
     - btc-util1:{{ cadvisor_port | default('8080') }}
+    - monitor1:{{ cadvisor_port | default('8080') }}
   relabel_configs:
     - source_labels: [__address__]
       target_label: instance
@@ -18,6 +19,7 @@ scrape_configs:
   static_configs:
   - targets:
     - btc-util1:9100
+    - monitor1:9100
   relabel_configs:
     - source_labels: [__address__]
       target_label: instance
