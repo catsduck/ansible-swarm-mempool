@@ -5,4 +5,4 @@ scrape_configs:
   scrape_interval: 5s
   static_configs:
   - targets:
-    - btc-util1:8080
+    - btc-util1:{{ cadvisor_port | default('8080') }}

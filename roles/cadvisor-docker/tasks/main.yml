@@ -14,4 +14,4 @@
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     published_ports:
-      - "{{ cadvisor_port }}:8080"
+      - "{{ cadvisor_port | default('8080') }}:8080"
