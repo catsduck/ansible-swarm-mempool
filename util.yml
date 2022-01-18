@@ -9,3 +9,4 @@
     - { role: cadvisor-docker, tags: "cadvisor-docker" }
     - { role: electrumx-docker, tags: "electrumx-docker" }
     - { role: mempool-docker, tags: "mempool-docker" }
+    - { role: node_exporter, tags: "node_exporter" }

@@ -6,3 +6,9 @@ scrape_configs:
   static_configs:
   - targets:
     - btc-util1:{{ cadvisor_port | default('8080') }}
+
+- job_name: node_exporter
+  scrape_interval: 5s
+  static_configs:
+  - targets:
+    - btc-util1:9100
