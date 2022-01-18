@@ -5,7 +5,6 @@
     name: cadvisor
     image: "gcr.io/cadvisor/cadvisor:{{ cadvisor_version }}"
     restart_policy: always
-    privileged: true
     detach: true
     volumes:
       - /:/rootfs:ro
