@@ -9,6 +9,7 @@
   template:
     src: prometheus.yml.j2
     dest: /etc/prometheus/prometheus.yml
+  register: prom_config
 
 - name: Create prometheus volume
   community.docker.docker_volume:
@@ -21,6 +22,14 @@
     restart_policy: always
     volumes:
       - prometheus:/prometheus
-      - /etc/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - /etc/prometheus:/etc/prometheus:ro
     ports:
       - 9090:9090
+
+- name: Reload prometheus container if config changes
+  community.docker.docker_container:
+    name: prometheus
+    state: stopped
+    force_kill : true
+    kill_signal: SIGHUP
+  when: prom_config.changed
