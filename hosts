@@ -3,3 +3,15 @@ btc-util1
 
 [monitoring]
 monitor1
+
+[swarm-managers]
+manager1
+worker1
+
+[swarm-workers]
+worker1
+worker2
+
+[swarm-nodes:children]
+swarm-managers
+swarm-workers
