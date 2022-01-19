@@ -1,0 +1,33 @@
+---
+
+- name: Check if swarm exists
+  community.docker.docker_host_info:
+  register: swarm_exists
+
+- name: Create swarm
+  community.docker.docker_swarm:
+    state: present
+  when: "'swarm-managers' in group_names"
+  run_once: true
+  register: swarm_info
+
+- name: Join swarm as manager
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ swarm_info.swarm_facts.JoinTokens.Manager }}"
+    remote_addrs: "{{ groups['swarm-managers'][0] }}:2377"
+  when:
+    - swarm_exists.host_info.Swarm.Cluster is not defined
+    - "'swarm-managers' in group_names"
+  register: swarm_manager_join
+
+- name: Join swarm as worker
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ swarm_info.swarm_facts.JoinTokens.Worker }}"
+    remote_addrs: "{{ groups['swarm-managers'][0] }}:2377"
+  when:
+    - swarm_exists.host_info.Swarm.Cluster is not defined
+    - "'swarm-workers' in group_names"
+    - swarm_manager_join is skipped
+
