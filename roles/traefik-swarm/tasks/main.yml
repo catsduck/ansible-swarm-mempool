@@ -1,0 +1,61 @@
+---
+
+- include_vars: vault.yml
+
+- name: Create traefik service
+  community.docker.docker_swarm_service:
+    name: traefik
+    image: traefik:v2.5
+    placement:
+      constraints:
+        - node.role==manager
+    networks:
+      - traefik-public
+    publish:
+      - target_port: 80
+        published_port: 80
+      - target_port: 443
+        published_port: 443
+      - target_port: 50002
+        published_port: 50002
+    mounts:
+      - source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - source: tlscerts
+        target: /tlscerts
+        type: volume
+        driver_config:
+          name: local
+          options:
+            type: nfs
+            device: :/volume2/swarm/dockervols/tlscerts
+            o: "addr=192.168.1.222,rw,nfsvers=4,async"
+    labels:
+      traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.{{ traefik_domain }}`)"
+      traefik.http.routers.traefik-dashboard.entrypoints: "httpsecure"
+      traefik.http.routers.traefik-dashboard.service: "api@internal"
+      traefik.http.routers.traefik-dashboard.tls.certresolver: "certs"
+      traefik.http.services.traefik-dashboard.loadbalancer.server.port: "8080"
+    args:
+      - --api.dashboard=true
+      - --providers.docker.swarmmode=true
+      - --entrypoints.http.address=:80
+      - --entrypoints.httpsecure.address=:443
+      - --entrypoints.electrumxtls.address=:50002
+      # redirect requests to 'http' entrypoint to 'httpsecure'
+      - --entrypoints.http.http.redirections.entrypoint.to=httpsecure
+      # enable tls on 'httpsecure' endpoint and use certificates from 'certs'
+      - --entrypoints.httpsecure.http.tls=true
+      - --entrypoints.httpsecure.http.tls.certresolver=certs
+      # create a wildcard cert for the domain
+      - --entrypoints.httpsecure.http.tls.domains[0].main={{ traefik_domain }}
+      - --entrypoints.httpsecure.http.tls.domains[0].sans=*.{{ traefik_domain }}
+      - --certificatesresolvers.certs.acme.email={{ traefik_acme_email }}
+      - --certificatesresolvers.certs.acme.storage=/tlscerts/acme.json
+      - --certificatesresolvers.certs.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.certs.acme.dnschallenge=true
+      - --certificatesresolvers.certs.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.certs.acme.dnschallenge.resolvers=1.1.1.1:53
+    env:
+      - CF_DNS_API_TOKEN={{ traefik_cf_dns_api_token }}
+  run_once: true

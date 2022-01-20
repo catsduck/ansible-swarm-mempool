@@ -6,3 +6,9 @@
   roles:
     - { role: docker, tags: "docker" }
     - { role: docker-swarm, tags: "docker-swarm" }
+
+- name: deploy swarm services
+  become: true
+  hosts: swarm-managers
+  roles:
+    - { role: traefik-swarm, tags: "traefik-swarm" }
