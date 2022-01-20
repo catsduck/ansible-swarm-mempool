@@ -1,0 +1,43 @@
+---
+
+# Manages instance of electrumx running in Docker Swarm
+
+# ELECTRUMX_DAEMON_URL needs to be set to a Bitcoin full node RPC endpoint
+# ie http://user:pass@host:port
+
+- include_vars: vault.yml
+
+- name: Create electrumx service
+  community.docker.docker_swarm_service:
+    name: electrumx
+    image: catsduck/electrumx
+    placement:
+      constraints:
+        - node.role==worker
+    networks:
+      - traefik-public
+    mounts:
+      - source: electrumx-data
+        target: /data
+        type: volume
+        driver_config:
+          name: local
+          options:
+            type: nfs
+            device: :/volume2/swarm/dockervols/electrumx-data
+            o: "addr=192.168.1.222,rw,nfsvers=4,async"
+    env:
+      - REQUEST_TIMEOUT=120
+      - MAX_SEND=100000000
+      - INITIAL_CONCURRENT=100000
+      - COST_SOFT_LIMIT=1000000
+      - COST_HARD_LIMIT=10000000
+      - DAEMON_URL={{ ELECTRUMX_DAEMON_URL }}
+
+    labels:
+      traefik.tcp.routers.electrumx.entrypoints: "electrumxtls"
+      traefik.tcp.routers.electrumx.rule: "HostSNI(`*`)"
+      traefik.tcp.routers.electrumx.service: "electrumx"
+      traefik.tcp.routers.electrumx.tls: "true"
+      traefik.tcp.routers.electrumx.tls.passthrough: "true"
+      traefik.tcp.services.electrumx.loadbalancer.server.port: "50002"

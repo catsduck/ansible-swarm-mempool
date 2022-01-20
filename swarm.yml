@@ -9,6 +9,7 @@
 
 - name: deploy swarm services
   become: true
-  hosts: swarm-managers
+  hosts: "{{ groups['swarm-managers'] | random }}"
   roles:
     - { role: traefik-swarm, tags: "traefik-swarm" }
+    - { role: electrumx-swarm, tags: "electrumx-swarm" }
