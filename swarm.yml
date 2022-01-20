@@ -12,4 +12,5 @@
   hosts: "{{ groups['swarm-managers'] | random }}"
   roles:
     - { role: traefik-swarm, tags: "traefik-swarm" }
+    - { role: cadvisor-swarm, tags: "cadvisor-swarm" }
     - { role: electrumx-swarm, tags: "electrumx-swarm" }

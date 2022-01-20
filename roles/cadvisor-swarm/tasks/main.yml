@@ -1,0 +1,26 @@
+---
+
+- name: Deploy cAdvisor global service
+  community.docker.docker_swarm_service:
+    name: cadvisor
+    image: "gcr.io/cadvisor/cadvisor:{{ cadvisor_version }}"
+    mode: global
+    networks:
+      - internal
+    mounts:
+      - target: /rootfs
+        source: /
+        readonly: true
+      - target: /var/run
+        source: /var/run
+        readonly: true
+      - target: /sys
+        source: /sys
+        readonly: true
+      - target: /var/lib/docker
+        source: /var/lib/docker
+        readonly: true
+      - target: /dev/disk
+        source: /dev/disk
+        readonly: true
+
