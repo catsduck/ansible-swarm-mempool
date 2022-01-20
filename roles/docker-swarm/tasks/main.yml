@@ -11,6 +11,13 @@
   run_once: true
   register: swarm_info
 
+- name: Create traefik overlay network
+  community.docker.docker_network:
+    name: traefik-public
+    driver: overlay
+  when: "'swarm-managers' in group_names"
+  run_once: true
+
 - name: Join swarm as manager
   community.docker.docker_swarm:
     state: join
