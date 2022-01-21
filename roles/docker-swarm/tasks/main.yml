@@ -20,7 +20,7 @@
 
 - name: Create internal overlay network
   community.docker.docker_network:
-    name: internal
+    name: internal-swarm
     driver: overlay
   when: "'swarm-managers' in group_names"
   run_once: true

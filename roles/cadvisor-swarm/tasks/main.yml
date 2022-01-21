@@ -6,7 +6,7 @@
     image: "gcr.io/cadvisor/cadvisor:{{ cadvisor_version }}"
     mode: global
     networks:
-      - internal
+      - internal-swarm
     mounts:
       - target: /rootfs
         source: /
