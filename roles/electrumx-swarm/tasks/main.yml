@@ -33,8 +33,8 @@
       - COST_SOFT_LIMIT=1000000
       - COST_HARD_LIMIT=10000000
       - DAEMON_URL={{ ELECTRUMX_DAEMON_URL }}
-
     labels:
+      traefik.enable: "true"
       traefik.tcp.routers.electrumx.entrypoints: "electrumxtls"
       traefik.tcp.routers.electrumx.rule: "HostSNI(`*`)"
       traefik.tcp.routers.electrumx.service: "electrumx"

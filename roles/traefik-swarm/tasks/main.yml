@@ -31,6 +31,7 @@
             device: :/volume2/swarm/dockervols/tlscerts
             o: "addr=192.168.1.222,rw,nfsvers=4,async"
     labels:
+      traefik.enable: "true"
       traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.{{ traefik_domain }}`)"
       traefik.http.routers.traefik-dashboard.entrypoints: "httpsecure"
       traefik.http.routers.traefik-dashboard.service: "api@internal"
@@ -39,6 +40,7 @@
     args:
       - --api.dashboard=true
       - --providers.docker.swarmmode=true
+      - --providers.docker.exposedbydefault=false
       # set default docker network to connect to containers
       - --providers.docker.network=traefik-public
       - --entrypoints.http.address=:80
