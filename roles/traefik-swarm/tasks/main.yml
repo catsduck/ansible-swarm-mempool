@@ -39,6 +39,8 @@
     args:
       - --api.dashboard=true
       - --providers.docker.swarmmode=true
+      # set default docker network to connect to containers
+      - --providers.docker.network=traefik-public
       - --entrypoints.http.address=:80
       - --entrypoints.httpsecure.address=:443
       - --entrypoints.electrumxtls.address=:50002
