@@ -1,0 +1,26 @@
+---
+
+- name: Deploy grafana service
+  community.docker.docker_swarm_service:
+    name: grafana
+    image: grafana/grafana-oss
+    networks:
+      - traefik-public
+      - internal-swarm
+    mounts:
+      - source: grafana
+        target: /var/lib/grafana
+        type: volume
+        driver_config:
+          name: local
+          options:
+            type: nfs
+            device: :/volume2/swarm/dockervols/grafana
+            o: "addr=192.168.1.222,rw,nfsvers=4,async"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.grafana.rule: "Host(`grafana.{{ traefik_domain }}`)"
+      traefik.http.routers.grafana.entrypoints: "httpsecure"
+      traefik.http.routers.grafana.service: "grafana"
+      traefik.http.routers.grafana.tls.certresolver: "certs"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
