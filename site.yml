@@ -1,4 +1,4 @@
 ---
 
 - import_playbook: monitor.yml
-- import_playbook: util.yml
+- import_playbook: swarm.yml
