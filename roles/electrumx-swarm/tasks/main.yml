@@ -16,6 +16,7 @@
         - node.role==worker
     networks:
       - traefik-public
+      - internal-swarm
     mounts:
       - source: electrumx-data
         target: /data

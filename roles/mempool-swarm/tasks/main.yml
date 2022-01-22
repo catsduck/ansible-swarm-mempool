@@ -1,0 +1,89 @@
+---
+
+# loosely following https://github.com/mempool/mempool/tree/master/docker
+
+- include_vars: vault.yml
+
+- name: Create mempool docker stack
+  community.docker.docker_stack:
+    name: mempool
+    compose:
+      - version: "3.7"
+        services:
+          web:
+            image: mempool/frontend:v2.3.0
+            user: "1000:1000"
+            restart: always
+            stop_grace_period: 1m
+            command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
+            networks:
+              - traefik-public
+              - internal-swarm
+            environment:
+              FRONTEND_HTTP_PORT: "8080"
+              BACKEND_MAINNET_HTTP_HOST: "tasks.mempool_api"
+            depends_on:
+              - "api"
+            deploy:
+              labels:
+                traefik.enable: "true"
+                traefik.http.routers.mempool.rule: "Host(`mempool.{{ traefik_domain }}`)"
+                traefik.http.routers.mempool.entrypoints: "httpsecure"
+                traefik.http.routers.mempool.service: "mempool"
+                traefik.http.routers.mempool.tls.certresolver: "certs"
+                traefik.http.services.mempool.loadbalancer.server.port: "8080"
+          api:
+            image: mempool/backend:v2.3.0
+            user: "1000:1000"
+            restart: always
+            stop_grace_period: 1m
+            command: "./wait-for-it.sh db:3306 --timeout=720 --strict -- ./start.sh"
+            networks:
+              - internal-swarm
+            environment:
+              CORE_RPC_HOST: "{{ vault_mempool_rpc_host }}"
+              CORE_RPC_PORT: "8332"
+              CORE_RPC_USERNAME: "{{ vault_mempool_rpc_user }}"
+              CORE_RPC_PASSWORD: "{{ vault_mempool_rpc_pass }}"
+              ELECTRUM_HOST: "tasks.electrumx"
+              ELECTRUM_PORT: "50002"
+              ELECTRUM_TLS: "true"
+              DATABASE_ENABLED: "true"
+              DATABASE_HOST: "tasks.mempool_db"
+              DATABASE_PORT: "3306"
+              DATABASE_DATABASE: "mempool"
+              DATABASE_USERNAME: "{{ vault_mempool_mysql_user }}"
+              DATABASE_PASSWORD: "{{ vault_mempool_mysql_pass }}"
+              BACKEND_MAINNET_HTTP_PORT: "8999"
+              CACHE_DIR: "/backend/cache"
+              MEMPOOL_BACKEND: "electrum"
+              MEMPOOL_CLEAR_PROTECTION_MINUTES: "20"
+            depends_on:
+              - "db"
+          db:
+            image: mariadb:10.7
+            restart: always
+            stop_grace_period: 1m
+            networks:
+              - internal-swarm
+            volumes:
+              - type: volume
+                source: mysql
+                target: /var/lib/mysql
+            user: "1000:1000"
+            environment:
+              MYSQL_DATABASE: "mempool"
+              MYSQL_USER: "{{ vault_mempool_mysql_user }}"
+              MYSQL_PASSWORD: "{{ vault_mempool_mysql_pass }}"
+              MYSQL_ROOT_PASSWORD: "{{ vault_mempool_mysql_root_pass }}"
+        networks:
+          traefik-public:
+            external: true
+          internal-swarm:
+            external: true
+        volumes:
+          mysql:
+            driver_opts:
+              type: nfs
+              device: :/volume2/swarm/dockervols/mempool-mysql
+              o: "addr=192.168.1.222,rw,nfsvers=4,async"
