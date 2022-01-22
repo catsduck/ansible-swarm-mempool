@@ -10,7 +10,7 @@
 - name: Create electrumx service
   community.docker.docker_swarm_service:
     name: electrumx
-    image: catsduck/electrumx
+    image: catsduck/electrumx:v1.0.0
     placement:
       constraints:
         - node.role==worker
