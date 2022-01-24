@@ -1,0 +1,8 @@
+---
+
+mempool_rpc_host: "{{ vault_mempool_rpc_host }}"
+mempool_rpc_user: "{{ vault_mempool_rpc_user }}"
+mempool_rpc_pass: "{{ vault_mempool_rpc_pass }}"
+mempool_mysql_user: "{{ vault_mempool_mysql_user }}"
+mempool_mysql_pass: "{{ vault_mempool_mysql_pass }}"
+mempool_mysql_root_pass: "{{ vault_mempool_mysql_root_pass }}"

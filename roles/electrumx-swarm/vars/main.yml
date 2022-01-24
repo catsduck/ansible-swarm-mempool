@@ -1,3 +1,3 @@
 ---
 
-ELECTRUMX_DAEMON_URL: "{{ vault_electrumx_daemon_url }}"
+electrumx_daemon_url: "{{ vault_electrumx_daemon_url }}"

@@ -41,10 +41,10 @@
             networks:
               - internal-swarm
             environment:
-              CORE_RPC_HOST: "{{ vault_mempool_rpc_host }}"
+              CORE_RPC_HOST: "{{ mempool_rpc_host }}"
               CORE_RPC_PORT: "8332"
-              CORE_RPC_USERNAME: "{{ vault_mempool_rpc_user }}"
-              CORE_RPC_PASSWORD: "{{ vault_mempool_rpc_pass }}"
+              CORE_RPC_USERNAME: "{{ mempool_rpc_user }}"
+              CORE_RPC_PASSWORD: "{{ mempool_rpc_pass }}"
               ELECTRUM_HOST: "tasks.electrumx"
               ELECTRUM_PORT: "50002"
               ELECTRUM_TLS: "true"
@@ -52,8 +52,8 @@
               DATABASE_HOST: "tasks.mempool_db"
               DATABASE_PORT: "3306"
               DATABASE_DATABASE: "mempool"
-              DATABASE_USERNAME: "{{ vault_mempool_mysql_user }}"
-              DATABASE_PASSWORD: "{{ vault_mempool_mysql_pass }}"
+              DATABASE_USERNAME: "{{ mempool_mysql_user }}"
+              DATABASE_PASSWORD: "{{ mempool_mysql_pass }}"
               BACKEND_MAINNET_HTTP_PORT: "8999"
               CACHE_DIR: "/backend/cache"
               MEMPOOL_BACKEND: "electrum"
@@ -73,9 +73,9 @@
             user: "1000:1000"
             environment:
               MYSQL_DATABASE: "mempool"
-              MYSQL_USER: "{{ vault_mempool_mysql_user }}"
-              MYSQL_PASSWORD: "{{ vault_mempool_mysql_pass }}"
-              MYSQL_ROOT_PASSWORD: "{{ vault_mempool_mysql_root_pass }}"
+              MYSQL_USER: "{{ mempool_mysql_user }}"
+              MYSQL_PASSWORD: "{{ mempool_mysql_pass }}"
+              MYSQL_ROOT_PASSWORD: "{{ mempool_mysql_root_pass }}"
         networks:
           traefik-public:
             external: true

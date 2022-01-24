@@ -1,7 +1,5 @@
 ---
 
-- include_vars: vault.yml
-
 - name: Create traefik service
   community.docker.docker_swarm_service:
     name: traefik
