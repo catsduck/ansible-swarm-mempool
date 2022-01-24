@@ -86,4 +86,4 @@
             driver_opts:
               type: nfs
               device: :/volume2/swarm/dockervols/mempool-mysql
-              o: "addr=192.168.1.222,rw,nfsvers=4,async"
+              o: "{{ nfs_mount_options }}"

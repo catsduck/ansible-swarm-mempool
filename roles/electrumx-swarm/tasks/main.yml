@@ -26,7 +26,7 @@
           options:
             type: nfs
             device: :/volume2/swarm/dockervols/electrumx-data
-            o: "addr=192.168.1.222,rw,nfsvers=4,async"
+            o: "{{ nfs_mount_options }}"
     env:
       - REQUEST_TIMEOUT=120
       - MAX_SEND=100000000

@@ -27,7 +27,7 @@
           options:
             type: nfs
             device: :/volume2/swarm/dockervols/tlscerts
-            o: "addr=192.168.1.222,rw,nfsvers=4,async"
+            o: "{{ nfs_mount_options }}"
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.{{ traefik_domain }}`)"

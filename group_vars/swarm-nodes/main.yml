@@ -1,5 +1,7 @@
 ---
 
+nfs_mount_options: "addr=192.168.1.222,rw,nfsvers=4,async"
+
 traefik_domain: "{{ vault_traefik_domain }}"
 traefik_acme_email: "{{ vault_traefik_acme_email }}"
 traefik_cf_dns_api_token: "{{ vault_traefik_cf_dns_api_token }}"
