@@ -1,2 +1,2 @@
 # ansible-hyperv
-ansible playbooks for hyper-v guests
+Ansible repo for configuring Docker Swarm nodes and services 
