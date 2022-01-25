@@ -45,3 +45,8 @@
     - "'swarm-workers' in group_names"
     - swarm_manager_join is skipped
 
+- name: Install jsondiff
+  ansible.builtin.include_role:
+    name: pip3
+  vars:
+    pip3_packages: jsondiff
