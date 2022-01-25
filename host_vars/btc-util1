@@ -1,3 +1,0 @@
----
-
-mempool_electrum_host: "{{ ansible_facts['hostname'] }}"

@@ -1,6 +1,3 @@
-[monitoring]
-monitor1
-
 [swarm-managers]
 manager1
 worker1
