@@ -6,15 +6,6 @@ Three hosts are configured to run Docker in swarm mode.
 The swarm will run an instance of Mempool along with an Electrum server and
 Traefik to provide https access.
 
-## Swarm nodes
-Three swarm nodes running Ubuntu are used
-
-| Node|Role|
-|---|:---:|
-|manager1|manager and worker|
-|worker1|manager and worker|
-|worker2|worker|
-
 ## Swarm services
 ### Traefik
 An instance of https://github.com/traefik/traefik.
