@@ -1,7 +1,7 @@
 [swarm-managers]
-manager1
-worker1
-worker2
+swarm1
+swarm2
+swarm3
 
 [swarm-nodes:children]
 swarm-managers
