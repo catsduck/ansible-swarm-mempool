@@ -11,9 +11,6 @@
   community.docker.docker_swarm_service:
     name: electrumx
     image: catsduck/electrumx:v1.0.0
-    placement:
-      constraints:
-        - node.role==worker
     networks:
       - traefik-public
       - internal-swarm
