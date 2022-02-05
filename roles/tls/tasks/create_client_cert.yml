@@ -1,0 +1,88 @@
+---
+
+- name: lookup home dir path on control machine
+  debug:
+    msg: "{{ lookup('env', 'HOME') }}"
+  delegate_to: localhost
+  register: home_dir
+
+- name: create tls dir
+  ansible.builtin.file:
+    path: "{{ home_dir.msg }}/.tls"
+    state: directory
+  become: false
+  delegate_to: localhost
+  register: tls_dir
+
+- name: set vars
+  ansible.builtin.set_fact:
+    client_key_path: "{{ tls_dir.path }}/{{ tls_client_name }}-client.key"
+    client_cert_path: "{{ tls_dir.path }}/{{ tls_client_name }}-client.pem"
+
+- name: create private key
+  community.crypto.openssl_privatekey:
+    path: "{{ client_key_path }}"
+  become: false
+  delegate_to: localhost
+  run_once: true
+
+- name: check if certificate exists
+  stat:
+    path: "{{ client_cert_path }}"
+  delegate_to: localhost
+  run_once: true
+  register: client_certificate_exists
+
+- name: create signing request
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ client_key_path }}"
+    extended_key_usage:
+      - clientAuth
+  when: not client_certificate_exists.stat.exists
+  delegate_to: localhost
+  run_once: true
+  register: csr
+
+- name: get content of existing certificate
+  slurp:
+    src: "{{ client_cert_path }}"
+  when: client_certificate_exists.stat.exists
+  delegate_to: localhost
+  run_once: true
+  register: client_certificate_content
+
+- name: sign the certificate
+  community.crypto.x509_certificate_pipe:
+    content: "{{ (client_certificate_content.content | b64decode) if client_certificate_exists.stat.exists else omit }}"
+    csr_content: "{{ csr.csr }}"
+    provider: ownca
+    ownca_path: "{{ ca_signing_cert_path }}"
+    ownca_privatekey_path: "{{ ca_private_key_path }}"
+    ownca_privatekey_passphrase: "{{ ca_passphrase }}"
+    ownca_not_after: +3650d  # valid for ten years
+    ownca_not_before: "-1d"  # valid since yesterday
+  when: not client_certificate_exists.stat.exists
+  delegate_to: localhost
+  run_once: true
+  register: client_certificate
+
+- name: create the certificate
+  copy:
+    dest: "{{ client_cert_path }}"
+    content: "{{ client_certificate.certificate }}"
+  become: false
+  delegate_to: localhost
+  run_once: true
+  when: client_certificate.changed
+
+- name: create docker secret for client key
+  community.docker.docker_secret:
+    name: "{{ tls_client_name }}_client_tls.key"
+    data: "{{ lookup('file', client_key_path) }}"
+    state: present
+
+- name: create docker secret for client cert
+  community.docker.docker_secret:
+    name: "{{ tls_client_name }}_client_tls.pem"
+    data: "{{ lookup('file', client_cert_path) }}"
+    state: present

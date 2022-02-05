@@ -50,3 +50,9 @@
     name: pip3
   vars:
     pip3_packages: jsondiff
+
+- name: create docker secret for signing cert
+  community.docker.docker_secret:
+    name: ansible_ca.pem
+    data: "{{ lookup('file', ca_signing_cert_path) }}"
+    state: present

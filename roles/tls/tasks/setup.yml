@@ -1,0 +1,47 @@
+---
+
+- name: create private key with passphrase
+  community.crypto.openssl_privatekey:
+    path: "{{ ca_private_key_path }}"
+    cipher: auto
+    passphrase: "{{ ca_passphrase }}"
+  delegate_to: localhost
+
+- name: check if certificate exists
+  stat:
+    path: "{{ ca_signing_cert_path }}"
+  become: true
+  run_once: true
+  delegate_to: localhost
+  register: certificate_exists
+
+- name: create signing request
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "{{ ca_private_key_path }}"
+    privatekey_passphrase: "{{ ca_passphrase }}"
+    common_name: Ansible CA
+    use_common_name_for_san: false  # since we do not specify SANs, don't use CN as a SAN
+    basic_constraints:
+      - 'CA:TRUE'
+    basic_constraints_critical: yes
+    key_usage:
+      - keyCertSign
+    key_usage_critical: true
+  when: not certificate_exists.stat.exists
+  delegate_to: localhost
+  register: ca_csr
+
+- name: create CA cert
+  community.crypto.x509_certificate:
+    path: "{{ ca_signing_cert_path }}"
+    csr_content: "{{ ca_csr.csr }}"
+    privatekey_path: "{{ ca_private_key_path }}"
+    privatekey_passphrase: "{{ ca_passphrase }}"
+    provider: selfsigned
+  when: not certificate_exists.stat.exists
+  delegate_to: localhost
+
+- name: copy CA cert to host
+  ansible.builtin.copy:
+    src: "{{ ca_signing_cert_path }}"
+    dest: "{{ ca_signing_cert_path }}"

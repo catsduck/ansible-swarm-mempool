@@ -1,0 +1,9 @@
+{
+  "metrics-addr" : "{{ ansible_facts['default_ipv4']['address'] }}:9323",
+  "experimental" : true,
+  "hosts" : ["unix:///var/run/docker.sock", "tcp://{{ ansible_facts['default_ipv4']['address'] }}:2376"],
+  "tlsverify" : true,
+  "tlscacert" : "{{ ca_signing_cert_path }}",
+  "tlscert" : "/etc/ssl/certs/docker.pem",
+  "tlskey" : "/etc/ssl/private/docker.key"
+}

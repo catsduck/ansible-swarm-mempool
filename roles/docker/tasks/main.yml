@@ -24,3 +24,33 @@
   vars:
     pip3_packages: docker
 
+- name: configure docker for tls
+  ansible.builtin.template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  register: docker_daemon
+
+- name: create docker service override dir
+  ansible.builtin.file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: add docker service override
+  ansible.builtin.copy:
+    src: override.conf
+    dest: /etc/systemd/system/docker.service.d/override.conf
+  register: docker_override
+
+- name: create docker server tls cert
+  include_role:
+    name: tls
+  vars:
+    tls_create_server_cert: true
+    tls_server_name: docker
+
+- name: restart docker
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    daemon_reload: true
+  when: docker_daemon.changed or docker_override.changed or server_certificate.changed

@@ -4,6 +4,7 @@
   become: true
   hosts: swarm-nodes
   roles:
+    - { role: tls, tags: "tls" }
     - { role: docker, tags: "docker" }
     - { role: docker-swarm, tags: "docker-swarm" }
 

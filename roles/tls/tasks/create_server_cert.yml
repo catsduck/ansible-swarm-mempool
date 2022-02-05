@@ -1,0 +1,52 @@
+---
+
+- name: create private key
+  community.crypto.openssl_privatekey:
+    path: "/etc/ssl/private/{{ tls_server_name }}.key"
+  become: true
+
+- name: check if certificate exists
+  stat:
+    path: "/etc/ssl/certs/{{ tls_server_name }}.pem"
+  become: true
+  register: server_certificate_exists
+
+- name: create signing request
+  community.crypto.openssl_csr_pipe:
+    privatekey_path: "/etc/ssl/private/{{ tls_server_name }}.key"
+    subject_alt_name:
+      - "DNS:{{ ansible_hostname }}"
+      - "IP:{{ ansible_facts['default_ipv4']['address'] }}"
+    extended_key_usage:
+      - serverAuth
+  when: not server_certificate_exists.stat.exists
+  become: true
+  register: csr
+
+- name: get content of existing certificate
+  slurp:
+    src: "/etc/ssl/certs/{{ tls_server_name }}.pem"
+  when: server_certificate_exists.stat.exists
+  become: true
+  register: server_certificate_content
+
+- name: sign the certificate
+  community.crypto.x509_certificate_pipe:
+    content: "{{ (server_certificate_content.content | b64decode) if server_certificate_exists.stat.exists else omit }}"
+    csr_content: "{{ csr.csr }}"
+    provider: ownca
+    ownca_path: "{{ ca_signing_cert_path }}"
+    ownca_privatekey_path: "{{ ca_private_key_path }}"
+    ownca_privatekey_passphrase: "{{ ca_passphrase }}"
+    ownca_not_after: +3650d  # valid for ten years
+    ownca_not_before: "-1d"  # valid since yesterday
+  when: not server_certificate_exists.stat.exists
+  delegate_to: localhost
+  register: server_certificate
+
+- name: create the certificate
+  copy:
+    dest: "/etc/ssl/certs/{{ tls_server_name }}.pem"
+    content: "{{ server_certificate.certificate }}"
+  become: true
+  when: server_certificate is changed
