@@ -1,5 +1,12 @@
 ---
 
+- name: create client tls cert for docker
+  include_role:
+    name: tls
+  vars:
+    tls_create_client_cert: true
+    tls_client_name: traefik
+
 - name: Create traefik service
   community.docker.docker_swarm_service:
     name: traefik
@@ -17,8 +24,6 @@
       - target_port: 50002
         published_port: 50002
     mounts:
-      - source: /var/run/docker.sock
-        target: /var/run/docker.sock
       - source: tlscerts
         target: /tlscerts
         type: volume
@@ -28,6 +33,10 @@
             type: nfs
             device: :/volume2/swarm/dockervols/tlscerts
             o: "{{ nfs_mount_options }}"
+    secrets:
+      - secret_name: ansible_ca.pem
+      - secret_name: traefik_client_tls.key
+      - secret_name: traefik_client_tls.pem
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik-dashboard.rule: "Host(`traefik.{{ traefik_domain }}`)"
@@ -35,29 +44,39 @@
       traefik.http.routers.traefik-dashboard.service: "api@internal"
       traefik.http.routers.traefik-dashboard.tls.certresolver: "certs"
       traefik.http.services.traefik-dashboard.loadbalancer.server.port: "8080"
-    args:
-      - --api.dashboard=true
-      - --providers.docker.swarmmode=true
-      - --providers.docker.exposedbydefault=false
-      # set default docker network to connect to containers
-      - --providers.docker.network=traefik-public
-      - --entrypoints.http.address=:80
-      - --entrypoints.httpsecure.address=:443
-      - --entrypoints.electrumxtls.address=:50002
-      # redirect requests to 'http' entrypoint to 'httpsecure'
-      - --entrypoints.http.http.redirections.entrypoint.to=httpsecure
-      # enable tls on 'httpsecure' endpoint and use certificates from 'certs'
-      - --entrypoints.httpsecure.http.tls=true
-      - --entrypoints.httpsecure.http.tls.certresolver=certs
-      # create a wildcard cert for the domain
-      - --entrypoints.httpsecure.http.tls.domains[0].main={{ traefik_domain }}
-      - --entrypoints.httpsecure.http.tls.domains[0].sans=*.{{ traefik_domain }}
-      - --certificatesresolvers.certs.acme.email={{ traefik_acme_email }}
-      - --certificatesresolvers.certs.acme.storage=/tlscerts/acme.json
-      - --certificatesresolvers.certs.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
-      - --certificatesresolvers.certs.acme.dnschallenge=true
-      - --certificatesresolvers.certs.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.certs.acme.dnschallenge.resolvers=1.1.1.1:53
     env:
       - CF_DNS_API_TOKEN={{ traefik_cf_dns_api_token }}
+      - TRAEFIK_API_DASHBOARD=true
+      # use docker swarm as the provider
+      - TRAEFIK_PROVIDERS_DOCKER_SWARMMODE=true
+      # require routed services to use 'traefik.enable' label
+      - TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT=false
+      # set default docker network to connect to containers
+      - TRAEFIK_PROVIDERS_DOCKER_NETWORK=traefik-public
+      # set up tls connection with docker running on same host using docker template notation
+      - TRAEFIK_PROVIDERS_DOCKER_ENDPOINT=tcp://{{ '{{' }} .Node.Hostname {{ '}}' }}:2376
+      - TRAEFIK_PROVIDERS_DOCKER_TLS_CA=/run/secrets/ansible_ca.pem
+      #- TRAEFIK_PROVIDERS_DOCKER_TLS_CAOPTIONAL=true
+      - TRAEFIK_PROVIDERS_DOCKER_TLS_CAOPTIONAL=false
+      - TRAEFIK_PROVIDERS_DOCKER_TLS_CERT=/run/secrets/traefik_client_tls.pem
+      - TRAEFIK_PROVIDERS_DOCKER_TLS_KEY=/run/secrets/traefik_client_tls.key
+      # create entrypoints
+      - TRAEFIK_ENTRYPOINTS_HTTP_ADDRESS=:80
+      - TRAEFIK_ENTRYPOINTS_HTTPSECURE_ADDRESS=:443
+      - TRAEFIK_ENTRYPOINTS_ELECTRUMXTLS_ADDRESS=:50002
+      # redirect requests to 'http' entrypoint to 'httpsecure'
+      - TRAEFIK_ENTRYPOINTS_HTTP_HTTP_REDIRECTIONS_ENTRYPOINT_TO=httpsecure
+      # enable tls on 'httpsecure' endpoint and use certificates from 'certs'
+      - TRAEFIK_ENTRYPOINTS_HTTPSECURE_HTTP_TLS=true
+      - TRAEFIK_ENTRYPOINTS_HTTPSECURE_HTTP_TLS_CERTRESOLVER=certs
+      # create a wildcard cert for the domain
+      - TRAEFIK_ENTRYPOINTS_HTTPSECURE_HTTP_TLS_DOMAINS[0]_MAIN={{ traefik_domain }}
+      - TRAEFIK_ENTRYPOINTS_HTTPSECURE_HTTP_TLS_DOMAINS[0]_SANS=*.{{ traefik_domain }}
+      # set up automatic tls cert creation
+      - TRAEFIK_CERTIFICATESRESOLVERS_CERTS_ACME_EMAIL={{ traefik_acme_email }}
+      - TRAEFIK_CERTIFICATESRESOLVERS_CERTS_ACME_STORAGE=/tlscerts/acme.json
+      - TRAEFIK_CERTIFICATESRESOLVERS_CERTS_ACME_CASERVER=https://acme-v02.api.letsencrypt.org/directory
+      - TRAEFIK_CERTIFICATESRESOLVERS_CERTS_ACME_DNSCHALLENGE=true
+      - TRAEFIK_CERTIFICATESRESOLVERS_CERTS_ACME_DNSCHALLENGE_PROVIDER=cloudflare
+      - TRAEFIK_CERTIFICATESRESOLVERS_CERTS_ACME_DNSCHALLENGE_RESOLVERS=1.1.1.1:53
   run_once: true
