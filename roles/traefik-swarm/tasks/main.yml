@@ -4,7 +4,6 @@
   include_role:
     name: tls
   vars:
-    tls_create_client_cert: true
     tls_client_name: traefik
 
 - name: Create traefik service

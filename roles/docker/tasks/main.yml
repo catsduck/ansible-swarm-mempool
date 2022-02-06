@@ -45,7 +45,6 @@
   include_role:
     name: tls
   vars:
-    tls_create_server_cert: true
     tls_server_name: docker
 
 - name: restart docker

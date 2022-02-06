@@ -6,12 +6,8 @@
 
 - name: create server auth cert
   include_tasks: create_server_cert.yml
-  when: tls_create_server_cert is defined
-        and tls_server_name is defined
-        and tls_create_server_cert|bool
+  when: tls_server_name is defined
 
 - name: create client auth cert and upload to docker secrets
   include_tasks: create_client_cert.yml
-  when: tls_create_client_cert is defined
-        and tls_client_name is defined
-        and tls_create_client_cert|bool
+  when: tls_client_name is defined
