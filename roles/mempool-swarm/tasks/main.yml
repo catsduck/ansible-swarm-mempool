@@ -18,7 +18,7 @@
             command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
             networks:
               - traefik-public
-              - internal-swarm
+              - swarm-internal
             environment:
               FRONTEND_HTTP_PORT: "8080"
               BACKEND_MAINNET_HTTP_HOST: "tasks.mempool_api"
@@ -39,7 +39,8 @@
             stop_grace_period: 1m
             command: "./wait-for-it.sh db:3306 --timeout=720 --strict -- ./start.sh"
             networks:
-              - internal-swarm
+              - bridge
+              - swarm-internal
             environment:
               CORE_RPC_HOST: "{{ mempool_rpc_host }}"
               CORE_RPC_PORT: "8332"
@@ -65,7 +66,7 @@
             restart: always
             stop_grace_period: 1m
             networks:
-              - internal-swarm
+              - swarm-internal
             volumes:
               - type: volume
                 source: mysql
@@ -77,9 +78,11 @@
               MYSQL_PASSWORD: "{{ mempool_mysql_pass }}"
               MYSQL_ROOT_PASSWORD: "{{ mempool_mysql_root_pass }}"
         networks:
+          bridge:
+            external: true
           traefik-public:
             external: true
-          internal-swarm:
+          swarm-internal:
             external: true
         volumes:
           mysql:

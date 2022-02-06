@@ -6,7 +6,7 @@
     image: grafana/grafana-oss
     networks:
       - traefik-public
-      - internal-swarm
+      - swarm-internal
     mounts:
       - source: grafana
         target: /var/lib/grafana

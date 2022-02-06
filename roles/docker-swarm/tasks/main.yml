@@ -18,10 +18,18 @@
   when: "'swarm-managers' in group_names"
   run_once: true
 
-- name: Create internal overlay network
+- name: Create swarm overlay network
   community.docker.docker_network:
-    name: internal-swarm
+    name: swarm
     driver: overlay
+  when: "'swarm-managers' in group_names"
+  run_once: true
+
+- name: Create swarm-internal overlay network
+  community.docker.docker_network:
+    name: swarm-internal
+    driver: overlay
+    internal: true
   when: "'swarm-managers' in group_names"
   run_once: true
 

@@ -13,7 +13,7 @@
     image: catsduck/electrumx:v1.0.0
     networks:
       - traefik-public
-      - internal-swarm
+      - swarm-internal
     mounts:
       - source: electrumx-data
         target: /data
