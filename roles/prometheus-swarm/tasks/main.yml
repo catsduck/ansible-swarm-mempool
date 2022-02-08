@@ -1,0 +1,46 @@
+---
+
+- name: create docker client tls cert
+  include_role:
+    name: tls
+  vars:
+    tls_client_name: prometheus
+
+- name: Create prometheus swarm config
+  community.docker.docker_config:
+    name: prometheus.yml
+    data:  "{{ lookup('file', 'prometheus.yml') }}"
+    state: present
+
+- name: Deploy prometheus service
+  community.docker.docker_swarm_service:
+    name: prometheus
+    image: prom/prometheus
+    args:
+      - --config.file=/prometheus.yml
+    configs:
+      - config_name: prometheus.yml
+    mounts:
+      - source: prometheus
+        target: /prometheus/data
+        type: volume
+        driver_config:
+          name: local
+          options:
+            type: nfs
+            device: :/volume2/swarm/dockervols/prometheus
+            o: "{{ nfs_mount_options }}"
+    networks:
+      - traefik-public
+      - swarm-internal
+    secrets:
+      - secret_name: ansible_ca.pem
+      - secret_name: prometheus_client_tls.key
+      - secret_name: prometheus_client_tls.pem
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.prometheus.rule: "Host(`prometheus.{{ traefik_domain }}`)"
+      traefik.http.routers.prometheus.entrypoints: "httpsecure"
+      traefik.http.routers.prometheus.service: "prometheus"
+      traefik.http.routers.prometheus.tls.certresolver: "certs"
+      traefik.http.services.prometheus.loadbalancer.server.port: "9090"

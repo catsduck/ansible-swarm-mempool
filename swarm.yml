@@ -7,6 +7,7 @@
     - { role: tls, tags: "tls" }
     - { role: docker, tags: "docker" }
     - { role: docker-swarm, tags: "docker-swarm" }
+    - { role: node_exporter, tags: "node_exporter" }
 
 - name: deploy swarm services
   become: true
@@ -17,3 +18,4 @@
     - { role: electrumx-swarm, tags: "electrumx-swarm" }
     - { role: grafana-swarm, tags: "grafana-swarm" }
     - { role: mempool-swarm, tags: "mempool-swarm" }
+    - { role: prometheus-swarm, tags: "prometheus-swarm" }

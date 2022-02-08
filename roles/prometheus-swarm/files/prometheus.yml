@@ -1,0 +1,63 @@
+---
+
+global:
+  scrape_interval: 10s
+
+scrape_configs:
+  - job_name: "swarm_nodes"
+    dockerswarm_sd_configs:
+    - host: https://swarm1:2376
+      role: nodes
+      tls_config:
+        ca_file: /run/secrets/ansible_ca.pem
+        cert_file: /run/secrets/prometheus_client_tls.pem
+        key_file: /run/secrets/prometheus_client_tls.key
+    relabel_configs:
+      # Fetch metrics on port 9323 using hostname
+      - source_labels: [__meta_dockerswarm_node_hostname]
+        target_label: __address__
+        regex: (.*)
+        replacement: $1:9323
+        action: replace
+
+  - job_name: "node-exporter"
+    dockerswarm_sd_configs:
+      - host: https://swarm1:2376
+        role: tasks
+        tls_config:
+          ca_file: /run/secrets/ansible_ca.pem
+          cert_file: /run/secrets/prometheus_client_tls.pem
+          key_file: /run/secrets/prometheus_client_tls.key
+    relabel_configs:
+      # since node-exporter runs on host directly, connect to hostname
+      - source_labels: [__meta_dockerswarm_node_hostname]
+        target_label: __address__
+        separator: ":"
+        regex: (.*)
+        replacement: $1:9100
+        action: replace
+
+  - job_name: "cadvisor"
+    dockerswarm_sd_configs:
+      - host: https://swarm1:2376
+        role: tasks
+        tls_config:
+          ca_file: /run/secrets/ansible_ca.pem
+          cert_file: /run/secrets/prometheus_client_tls.pem
+          key_file: /run/secrets/prometheus_client_tls.key
+        filters:
+          - name: name
+            values: [cadvisor]
+        port: 8080
+    relabel_configs:
+      # Only keep containers that should be running.
+      - source_labels: [__meta_dockerswarm_task_desired_state]
+        regex: running
+        action: keep
+      # set user friendly 'hostname' label
+      - source_labels: [__meta_dockerswarm_node_hostname]
+        target_label: hostname
+        separator: ":"
+        regex: (.*)
+        replacement: $1
+        action: replace
