@@ -39,4 +39,5 @@
   ansible.builtin.systemd:
     name: node_exporter
     state: started
+    daemon_reload: true
     enabled: true
