@@ -1,0 +1,10 @@
+---
+
+- name: Deploy alertmanager-discord service
+  community.docker.docker_swarm_service:
+    name: alertmanager-discord
+    image: catsduck/alertmanager-discord:0.0.1
+    networks:
+      - swarm
+    env:
+      - DISCORD_WEBHOOK={{ discord_webhook }}

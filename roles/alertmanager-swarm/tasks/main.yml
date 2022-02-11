@@ -1,0 +1,36 @@
+---
+
+- name: create docker client tls cert
+  include_role:
+    name: tls
+  vars:
+    tls_client_name: alertmanager
+
+- name: Create alertmanager swarm config
+  community.docker.docker_config:
+    name: alertmanager.yml
+    data:  "{{ lookup('file', 'alertmanager.yml') }}"
+    state: present
+
+- name: Deploy alertmanager service
+  community.docker.docker_swarm_service:
+    name: alertmanager
+    image: prom/alertmanager
+    args:
+      - --config.file=/alertmanager.yml
+    configs:
+      - config_name: alertmanager.yml
+    networks:
+      - swarm
+      - traefik-public
+    secrets:
+      - secret_name: ansible_ca.pem
+      - secret_name: alertmanager_client_tls.key
+      - secret_name: alertmanager_client_tls.pem
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.alertmanager.rule: "Host(`alertmanager.{{ traefik_domain }}`)"
+      traefik.http.routers.alertmanager.entrypoints: "httpsecure"
+      traefik.http.routers.alertmanager.service: "alertmanager"
+      traefik.http.routers.alertmanager.tls.certresolver: "certs"
+      traefik.http.services.alertmanager.loadbalancer.server.port: "9093"

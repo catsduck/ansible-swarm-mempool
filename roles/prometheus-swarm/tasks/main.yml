@@ -6,13 +6,19 @@
   vars:
     tls_client_name: prometheus
 
-- name: Create prometheus swarm config
+- name: create prometheus swarm config
   community.docker.docker_config:
     name: prometheus.yml
     data:  "{{ lookup('file', 'prometheus.yml') }}"
     state: present
 
-- name: Deploy prometheus service
+- name: create prometheus alert config
+  community.docker.docker_config:
+    name: prometheus-swarm-alerts.yml
+    data:  "{{ lookup('file', 'prometheus-swarm-alerts.yml') }}"
+    state: present
+
+- name: deploy prometheus service
   community.docker.docker_swarm_service:
     name: prometheus
     image: prom/prometheus
@@ -20,6 +26,7 @@
       - --config.file=/prometheus.yml
     configs:
       - config_name: prometheus.yml
+      - config_name: prometheus-swarm-alerts.yml
     mounts:
       - source: prometheus
         target: /prometheus/data

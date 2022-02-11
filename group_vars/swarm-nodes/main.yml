@@ -4,6 +4,8 @@ ca_passphrase: "{{ vault_ca_passphrase }}"
 ca_private_key_path: /etc/ssl/private/ansible-ca.key
 ca_signing_cert_path: /etc/ssl/certs/ansible-cert.pem
 
+discord_webhook: "{{ vault_discord_webhook }}"
+
 nfs_mount_options: "addr=192.168.1.222,rw,nfsvers=4,async"
 
 traefik_domain: "{{ vault_traefik_domain }}"
