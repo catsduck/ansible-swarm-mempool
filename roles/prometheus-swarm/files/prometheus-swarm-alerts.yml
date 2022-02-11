@@ -1,0 +1,62 @@
+groups:
+  - name: nodes
+    rules:
+      - alert: NodeDown
+        expr: up{job="node-exporter"} != 1
+        for: 2m
+        labels:
+          severity: high
+        annotations:
+          summary: Node {{ $labels.instance}} is down
+          description: Node {{ $labels.instance }} is down
+      - alert: NodeCpuUsage
+        expr: (1 - avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[1m]))) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: High CPU usage on {{ $labels.instance }}
+          description: High CPU usage on {{ $labels.instance }}. VALUE = {{ $value }}%
+      - alert: NodeMemUsage
+        expr: (1 - node_memory_MemAvailable_bytes{}/node_memory_MemTotal_bytes{}) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High Mem usage on {{ $labels.instance }}
+          description: High Mem usage on {{ $labels.instance }}. VALUE = {{ $value }}%
+      - alert: NodeDiskUsage
+        expr: (1-node_filesystem_free_bytes{}/node_filesystem_size_bytes{}) * 100 > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: High Disk usage on {{ $labels.instance }}
+          description: High Disk usage on {{ $labels.instance }} - mountpoint {{ $labels.mountpoint }}. VALUE = {{ $value }}%
+      - alert: NodeDiskSpaceRunningLow
+        expr: predict_linear(node_filesystem_free_bytes{}[1h], 24 * 60 * 60) < 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: Disk space low on {{ $labels.instance }}
+          description: Disk space projected to run out on {{ $labels.instance }} within 24 hours
+
+  - name: containers
+    rules:
+      - alert: ContainerCpuUsage
+        expr: (sum by (instance,hostname,container_label_com_docker_swarm_service_name) (irate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_service_name!=""}[1m]))) / on(instance) group_left(hostname) machine_cpu_cores{} * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High Container CPU usage - {{ $labels.container_label_com_docker_swarm_service_name }} on {{ $labels.hostname }}
+          description: High Container CPU usage - {{ $labels.container_label_com_docker_swarm_service_name }} on {{ $labels.hostname }}. VALUE = {{ $value }}%
+      - alert: ContainerMemUsage
+        expr: container_memory_working_set_bytes{container_label_com_docker_swarm_service_name!=""} / on(instance) group_left(hostname) machine_memory_bytes * 100 > 50
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: High Container Mem usage - {{ $labels.container_label_com_docker_swarm_service_name }} on {{ $labels.hostname }}
+          description: High Container Mem usage - {{ $labels.container_label_com_docker_swarm_service_name }} on {{ $labels.hostname }}. VALUE = {{ $value }}%

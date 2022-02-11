@@ -3,6 +3,23 @@
 global:
   scrape_interval: 10s
 
+rule_files:
+  - /prometheus-swarm-alerts.yml
+
+alerting:
+  alertmanagers:
+    - dockerswarm_sd_configs:
+      - host: https://swarm1:2376
+        role: tasks
+        tls_config:
+          ca_file: /run/secrets/ansible_ca.pem
+          cert_file: /run/secrets/prometheus_client_tls.pem
+          key_file: /run/secrets/prometheus_client_tls.key
+        filters:
+          - name: name
+            values: [alertmanager]
+        port: 9093
+
 scrape_configs:
   - job_name: "swarm_nodes"
     dockerswarm_sd_configs:

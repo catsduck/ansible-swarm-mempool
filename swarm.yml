@@ -19,3 +19,5 @@
     - { role: grafana-swarm, tags: "grafana-swarm" }
     - { role: mempool-swarm, tags: "mempool-swarm" }
     - { role: prometheus-swarm, tags: "prometheus-swarm" }
+    - { role: alertmanager_discord-swarm, tags: "alertmanager_discord-swarm" }
+    - { role: alertmanager-swarm, tags: "alertmanager-swarm" }
