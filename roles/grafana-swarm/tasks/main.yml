@@ -1,5 +1,28 @@
 ---
 
+- name: create datasource config
+  community.docker.docker_config:
+    name: grafana_datasources.yml
+    data:  "{{ lookup('file', 'grafana_datasources.yml') }}"
+    state: present
+
+- name: create dashboard config
+  community.docker.docker_config:
+    name: grafana_dashboards.yml
+    data:  "{{ lookup('file', 'grafana_dashboards.yml') }}"
+    state: present
+
+- name: create dashboard definition configs
+  community.docker.docker_config:
+    name: "{{ item }}"
+    data:  "{{ lookup('file', item) | b64encode }}"
+    data_is_b64: true
+    state: present
+  loop:
+    - grafana_dashboard_node_exporter_full.json
+    - grafana_dashboard_swarm_services.json 
+    - grafana_dashboard_swarm_nodes.json 
+
 - name: Deploy grafana service
   community.docker.docker_swarm_service:
     name: grafana
@@ -7,16 +30,17 @@
     networks:
       - traefik-public
       - swarm-internal
-    mounts:
-      - source: grafana
-        target: /var/lib/grafana
-        type: volume
-        driver_config:
-          name: local
-          options:
-            type: nfs
-            device: :/volume2/swarm/dockervols/grafana
-            o: "{{ nfs_mount_options }}"
+    configs:
+      - config_name: grafana_datasources.yml
+        filename: /etc/grafana/provisioning/datasources/grafana_datasources.yml
+      - config_name: grafana_dashboards.yml
+        filename: /etc/grafana/provisioning/dashboards/grafana_datasources.yml
+      - config_name: grafana_dashboard_swarm_nodes.json
+        filename: /etc/grafana/dashboards/grafana_dashboard_swarm_nodes.json
+      - config_name: grafana_dashboard_swarm_services.json
+        filename: /etc/grafana/dashboards/grafana_dashboard_swarm_services.json
+      - config_name: grafana_dashboard_node_exporter_full.json
+        filename: /etc/grafana/dashboards/grafana_dashboard_node_exporter_full.json
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.rule: "Host(`grafana.{{ traefik_domain }}`)"
