@@ -1,0 +1,922 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "iteration": 1645475206177,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-greens"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": false,
+          "expr": "engine_daemon_container_states_containers{}",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "{{ instance }} - {{ state }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Container status count",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":(\\d+)",
+            "renamePattern": ""
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-greens"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 14,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.0-beta1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "engine_daemon_container_states_containers{}",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} - {{ state }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Container status count over time",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":(\\d+)",
+            "renamePattern": ""
+          }
+        }
+      ],
+      "type": "state-timeline"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.0-beta1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "1-avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\",instance=~\"$instance\"}[$__rate_interval]))",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU usage",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":9100",
+            "renamePattern": ""
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 16
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.0-beta1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_memory_MemTotal_bytes{instance=~\"$instance\"}-node_memory_MemAvailable_bytes{instance=~\"$instance\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} ",
+          "refId": "usage"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_memory_MemTotal_bytes{instance=~\"$instance\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} total",
+          "refId": "total"
+        }
+      ],
+      "title": "Memory usage",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":9100",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "total",
+            "mappings": [
+              {
+                "fieldName": "swarm1 total",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "(?!.*total).*"
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 16
+      },
+      "id": 17,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_memory_MemTotal_bytes{instance=~\"$instance\"}-node_memory_MemAvailable_bytes{instance=~\"$instance\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} ",
+          "refId": "usage"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_memory_MemTotal_bytes{instance=~\"$instance\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} total",
+          "refId": "total"
+        }
+      ],
+      "title": "Memory usage",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":9100",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "total",
+            "mappings": [
+              {
+                "fieldName": "swarm1 total",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "(?!.*total).*"
+            }
+          }
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 24
+      },
+      "id": 12,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.0-beta1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\",instance=~\"$instance\"}-node_filesystem_free_bytes{mountpoint=\"/\",instance=~\"$instance\"}",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "usage"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\",instance=~\"$instance\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} total",
+          "refId": "total"
+        }
+      ],
+      "title": "Disk space usage",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":9100",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "total",
+            "mappings": [
+              {
+                "fieldName": "swarm1 total",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "(?!.*total).*"
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 24
+      },
+      "id": 16,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "pluginVersion": "8.4.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\",instance=~\"$instance\"}-node_filesystem_free_bytes{mountpoint=\"/\",instance=~\"$instance\"}",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "usage"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "node_filesystem_size_bytes{mountpoint=\"/\",instance=~\"$instance\"}",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} total",
+          "refId": "total"
+        }
+      ],
+      "title": "Disk space usage",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":9100",
+            "renamePattern": ""
+          }
+        },
+        {
+          "id": "configFromData",
+          "options": {
+            "configRefId": "total",
+            "mappings": [
+              {
+                "fieldName": "swarm1 total",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "(?!.*total).*"
+            }
+          }
+        }
+      ],
+      "type": "gauge"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "binBps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "irate(node_network_receive_bytes_total{device=\"eth0\",instance=~\"$instance\"}[1$__rate_interval])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} Download",
+          "refId": "Download"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "WtGjVk-nk"
+          },
+          "exemplar": true,
+          "expr": "-irate(node_network_transmit_bytes_total{device=\"eth0\",instance=~\"$instance\"}[$__rate_interval])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{ instance }} Upload",
+          "refId": "Upload"
+        }
+      ],
+      "title": "Bandwidth usage",
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": ":9100",
+            "renamePattern": ""
+          }
+        }
+      ],
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "WtGjVk-nk"
+        },
+        "definition": "label_values(instance)",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "hostname",
+        "options": [],
+        "query": {
+          "query": "label_values(instance)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "(.*):9100",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "WtGjVk-nk"
+        },
+        "definition": "label_values(instance)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "query": "label_values(instance)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "(.*:9100)",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Swarm nodes",
+  "uid": "4FSg8F-7z",
+  "version": 1,
+  "weekStart": ""
+}
