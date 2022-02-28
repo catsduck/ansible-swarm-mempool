@@ -71,4 +71,4 @@ NFS shares are mounted by services that need to save data persistently.
 #### Required variables
 | Variable | Description |
 |---|:---:|
-|nfs_mount_options|NFS mount info ie "addr=###.###.###.###,rw,nfsvers=5,async"|
+|nfs_mount_options|NFS mount info ie "addr=###.###.###.###,rw,nfsvers=4,async"|
