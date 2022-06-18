@@ -48,7 +48,7 @@
               CORE_RPC_PASSWORD: "{{ mempool_rpc_pass }}"
               ELECTRUM_HOST: "tasks.electrumx"
               ELECTRUM_PORT: "50002"
-              ELECTRUM_TLS: "true"
+              ELECTRUM_TLS_ENABLED: "true"
               DATABASE_ENABLED: "true"
               DATABASE_HOST: "tasks.mempool_db"
               DATABASE_PORT: "3306"
