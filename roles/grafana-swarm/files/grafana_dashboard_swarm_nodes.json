@@ -3,7 +3,10 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -22,11 +25,15 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1645475206177,
+  "iteration": 1655725579640,
   "links": [],
   "liveNow": false,
   "panels": [
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -70,7 +77,7 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "8.4.1",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -98,6 +105,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -174,6 +185,10 @@
       "type": "state-timeline"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -275,6 +290,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -390,7 +409,7 @@
             "configRefId": "total",
             "mappings": [
               {
-                "fieldName": "swarm1 total",
+                "fieldName": "swarm1:9100 total",
                 "handlerKey": "max"
               }
             ]
@@ -408,6 +427,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -451,7 +474,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.1",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -493,7 +516,7 @@
             "configRefId": "total",
             "mappings": [
               {
-                "fieldName": "swarm1 total",
+                "fieldName": "swarm1:9100 total",
                 "handlerKey": "max"
               }
             ]
@@ -511,6 +534,10 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -588,10 +615,13 @@
             "type": "prometheus",
             "uid": "WtGjVk-nk"
           },
+          "editorMode": "code",
           "exemplar": true,
           "expr": "node_filesystem_size_bytes{mountpoint=\"/\",instance=~\"$instance\"}-node_filesystem_free_bytes{mountpoint=\"/\",instance=~\"$instance\"}",
+          "hide": false,
           "interval": "",
           "legendFormat": "{{ instance }}",
+          "range": true,
           "refId": "usage"
         },
         {
@@ -622,7 +652,7 @@
             "configRefId": "total",
             "mappings": [
               {
-                "fieldName": "swarm1 total",
+                "fieldName": "swarm1:9100 total",
                 "handlerKey": "max"
               }
             ]
@@ -640,6 +670,10 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -683,7 +717,7 @@
         "showThresholdLabels": false,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "8.4.1",
+      "pluginVersion": "9.0.0",
       "targets": [
         {
           "datasource": {
@@ -724,7 +758,7 @@
             "configRefId": "total",
             "mappings": [
               {
-                "fieldName": "swarm1 total",
+                "fieldName": "swarm1:9100 total",
                 "handlerKey": "max"
               }
             ]
@@ -742,6 +776,10 @@
       "type": "gauge"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "WtGjVk-nk"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -850,7 +888,7 @@
     }
   ],
   "refresh": "1m",
-  "schemaVersion": 35,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -858,8 +896,12 @@
       {
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "prometheus",
@@ -884,8 +926,12 @@
       {
         "current": {
           "selected": false,
-          "text": "All",
-          "value": "$__all"
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "datasource": {
           "type": "prometheus",
@@ -910,7 +956,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
