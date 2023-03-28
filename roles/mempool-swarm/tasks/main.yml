@@ -11,7 +11,7 @@
       - version: "3.7"
         services:
           web:
-            image: mempool/frontend:v2.4.0
+            image: mempool/frontend:v2.5.0
             user: "1000:1000"
             restart: always
             stop_grace_period: 1m
@@ -33,7 +33,7 @@
                 traefik.http.routers.mempool.tls.certresolver: "certs"
                 traefik.http.services.mempool.loadbalancer.server.port: "8080"
           api:
-            image: mempool/backend:v2.4.0
+            image: mempool/backend:v2.5.0
             user: "1000:1000"
             restart: always
             stop_grace_period: 1m
